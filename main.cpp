@@ -39,38 +39,38 @@ int main(int argc, char *argv[])
 #endif
 
     // load translations
-    QString locale = QLocale::system().name();
-    QString ts = SETTINGS_GET_STRING(SETTING_TRANSLATION);
-    QString translationsDir =
-#ifdef Q_OS_WIN32
-            QCoreApplication::applicationDirPath() + QDir::separator() + "translations";
-#elif defined Q_OS_UNIX
-            "/usr/share/qsseditor/translations";
-#endif
+    //QString locale = QLocale::system().name();
+    //QString ts = SETTINGS_GET_STRING(SETTING_TRANSLATION);
+//    QString translationsDir =
+//#ifdef Q_OS_WIN32
+//            QCoreApplication::applicationDirPath() + QDir::separator() + "translations";
+//#elif defined Q_OS_UNIX
+//            "/usr/share/qsseditor/translations";
+//#endif
+//
+//    QString qtTranslationsDir =
+//#ifdef Q_OS_WIN32
+//            translationsDir;
+//#elif defined Q_OS_UNIX
+//            QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+//#endif
+//
+//    qDebug("Locale \"%s\", translation \"%s\"", qPrintable(locale), qPrintable(ts));
 
-    QString qtTranslationsDir =
-#ifdef Q_OS_WIN32
-            translationsDir;
-#elif defined Q_OS_UNIX
-            QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-#endif
+    //ts = ts.isEmpty() ? locale : (ts + ".qm");
 
-    qDebug("Locale \"%s\", translation \"%s\"", qPrintable(locale), qPrintable(ts));
+    //QTranslator translator_qt;
+    //qDebug("Loading Qt translation: %s", translator_qt.load("qt_" + ts, qtTranslationsDir) ? "ok" : "failed");
 
-    ts = ts.isEmpty() ? locale : (ts + ".qm");
+    //QTranslator translator_qtbase;
+    //qDebug("Loading Qt Base translation: %s", translator_qtbase.load("qtbase_" + ts, qtTranslationsDir) ? "ok" : "failed");
 
-    QTranslator translator_qt;
-    qDebug("Loading Qt translation: %s", translator_qt.load("qt_" + ts, qtTranslationsDir) ? "ok" : "failed");
+    //QTranslator translator;
+    //qDebug("Loading translation: %s", translator.load(ts, translationsDir) ? "ok" : "failed");
 
-    QTranslator translator_qtbase;
-    qDebug("Loading Qt Base translation: %s", translator_qtbase.load("qtbase_" + ts, qtTranslationsDir) ? "ok" : "failed");
-
-    QTranslator translator;
-    qDebug("Loading translation: %s", translator.load(ts, translationsDir) ? "ok" : "failed");
-
-    app.installTranslator(&translator_qt);
-    app.installTranslator(&translator_qtbase);
-    app.installTranslator(&translator);
+    //app.installTranslator(&translator_qt);
+    //app.installTranslator(&translator_qtbase);
+    //app.installTranslator(&translator);
 
     QssEditor w;
     w.show();
