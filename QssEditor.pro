@@ -1,12 +1,8 @@
 TARGET = QssEditor
 TEMPLATE = app
-QT += core gui
+QT += core gui uitools
+QT *= widgets printsupport
 
-greaterThan(QT_MAJOR_VERSION, 4): QT *= widgets printsupport
-
-mac {
-    greaterThan(QT_MAJOR_VERSION, 4): QT *= macextras
-}
 
 NVER1=0
 NVER2=6
@@ -282,7 +278,8 @@ LICENSES=LICENSE.txt
 
 INNO_APPID="{{A51E7AC1-A31C-40E7-82B3-D1DF32402DF8}"
 
-exists($$INNO) {
+!isEmpty(INNO){
+    exists($$INNO) {
     message("Inno Setup is found, will create a setup file in a custom dist target")
 
     LANGS=$$system(dir /B \"$$INNO\\..\\Languages\")
@@ -423,6 +420,9 @@ exists($$INNO) {
     distbin.depends += iss
     distbin.commands += $$mle(\"$$INNO\" /o. $$ADD \"$$ISS\")
     distbin.commands += $$mle(del /F /Q \"$$ISS\")
+}else {
+    warning("Inno Setup is not found, will not create a setup file in a custom dist target")
+}
 } else {
     warning("Inno Setup is not found, will not create a setup file in a custom dist target")
 }
