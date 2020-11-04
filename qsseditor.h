@@ -71,6 +71,7 @@ private slots:
     void slotFindNext();
     void slotAbout();
     void slotAboutQt();
+    void slotBrowse();
 
 private:
     Ui::QssEditor *ui;
@@ -78,6 +79,7 @@ private:
     bool m_changed;
     QString m_lastFileName;
     Project m_project;
+    QDialog* m_dialog;
 };
 
 #endif // QSSEDITOR_H

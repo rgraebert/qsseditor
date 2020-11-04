@@ -29,6 +29,7 @@
 #include <QTimer>
 #include <QMenu>
 #include <QDir>
+#include <QUiLoader>
 
 #include "searchandreplace.h"
 #include "qscilexerqss.h"
@@ -43,7 +44,8 @@
 QssEditor::QssEditor(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QssEditor),
-    m_changed(false)
+    m_changed(false),
+    m_dialog(nullptr)
 {
     ui->setupUi(this);
 
@@ -86,16 +88,6 @@ QssEditor::QssEditor(QWidget *parent) :
 #endif
                                  ));
 
-    // menu for toolbutton
-    QMenu *toolButtonMenu = new QMenu(this);
-    toolButtonMenu->addAction("Item1");
-    toolButtonMenu->addSeparator();
-    toolButtonMenu->addAction("Item2");
-    toolButtonMenu->addSeparator();
-    QAction *act = toolButtonMenu->addAction("Item3");
-    act->setEnabled(false);
-    ui->toolButton->setMenu(toolButtonMenu);
-
     m_timerDelayedApply = new QTimer(this);
     m_timerDelayedApply->setSingleShot(true);
     connect(m_timerDelayedApply, SIGNAL(timeout()), this, SLOT(slotApplyCss()));
@@ -112,20 +104,6 @@ QssEditor::QssEditor(QWidget *parent) :
     // splitter size
     QList<int> list = QList<int>() << width()/2 << width()/2;
     ui->splitter->setSizes(list);
-
-    // some MDI windows
-    QMdiSubWindow *mdi = ui->mdiArea->addSubWindow(new QLabel("MDI", ui->mdiArea));
-    mdi->resize(160, 80);
-
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-    ui->tree->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui->table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-#else
-    ui->tree->header()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->table->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-#endif
-
-    ui->tree->topLevelItem(0)->setExpanded(true);
 
     ui->text->setCaretLineVisible(true);
     ui->text->setCaretLineBackgroundColor(QColor("gainsboro"));
@@ -399,7 +377,8 @@ void QssEditor::slotCssChanged()
 void QssEditor::slotApplyCss()
 {
     ui->widgetAllWidgets->setStyleSheet(ui->text->text());
-    ui->toolButton->menu()->setStyleSheet(ui->widgetAllWidgets->styleSheet());
+    if (m_dialog)
+        m_dialog->setStyleSheet(ui->text->text());
 }
 
 void QssEditor::slotOpen()
@@ -473,14 +452,6 @@ void QssEditor::slotOptions()
 
 void QssEditor::slotProgress()
 {
-    int value = ui->progressBar->value();
-
-    if(value == ui->progressBar->maximum())
-        value = 0;
-    else
-        value++;
-
-    ui->progressBar->setValue(value);
 }
 
 void QssEditor::slotQuit()
@@ -537,4 +508,61 @@ void QssEditor::slotAbout()
 void QssEditor::slotAboutQt()
 {
     QMessageBox::aboutQt(this);
+}
+QString itemDescription(QObject* obj, QObject* root) {
+    QString hierarchy;
+    QObject* parent = obj->parent();
+    while (parent && parent != root) {
+        hierarchy = parent->metaObject()->className() + QString::fromLatin1(" > ") + hierarchy;
+        parent = parent->parent();
+    }
+    hierarchy +=obj->metaObject()->className();
+    if (!obj->objectName().isEmpty())
+        hierarchy += QString::fromLatin1("#") + obj->objectName();
+    return hierarchy;
+}
+
+void QssEditor::slotBrowse() {
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open dialog"), QString(), tr("Qt UI files (*.ui)"));
+
+    if (fileName.isEmpty())
+        return;
+
+    QUiLoader loader;
+    QFile file(fileName);
+    file.open(QFile::ReadOnly);
+    QWidget* myWidget = loader.load(&file, this);
+    file.close();
+    if (!myWidget) {
+        QMessageBox::warning(this,
+            tr("Warning"),
+            tr("Could not load UI file"),
+            QMessageBox::Ok);
+        return;
+    }
+
+    myWidget->setToolTip(itemDescription(myWidget, myWidget));
+    QList<QWidget*> lstChildren = myWidget->findChildren<QWidget*>();
+    foreach(QWidget * pWidget, lstChildren) {
+        pWidget->setToolTip(itemDescription(pWidget, myWidget));
+    }
+
+
+    QDialog* myDialog = qobject_cast<QDialog*>(myWidget);
+    if (myDialog) {
+        if (m_dialog) {
+            delete m_dialog;
+        }
+        
+        myDialog->setWindowModality(Qt::WindowModal);
+        myDialog->setModal(false);
+
+        myDialog->show();
+        m_dialog = myDialog;
+    }
+    else {
+        ui->gridLayout->replaceWidget(ui->previewContainer, myWidget);
+        delete ui->previewContainer;
+        ui->previewContainer = myWidget;
+    }
 }
