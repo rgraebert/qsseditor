@@ -30,6 +30,7 @@
 #include <QMenu>
 #include <QDir>
 #include <QUiLoader>
+#include <QResource>
 
 #include "searchandreplace.h"
 #include "qscilexerqss.h"
@@ -522,6 +523,15 @@ QString itemDescription(QObject* obj, QObject* root) {
     return hierarchy;
 }
 
+void QssEditor::slotQRC() {
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open dialog"), QString(), tr("Qt RCC files (*.rcc)"));
+
+    if (fileName.isEmpty())
+        return;
+
+    QResource::registerResource(fileName);
+}
+
 void QssEditor::slotBrowse() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open dialog"), QString(), tr("Qt UI files (*.ui)"));
 
@@ -553,12 +563,13 @@ void QssEditor::slotBrowse() {
         if (m_dialog) {
             delete m_dialog;
         }
-        
+
         myDialog->setWindowModality(Qt::WindowModal);
         myDialog->setModal(false);
 
         myDialog->show();
         m_dialog = myDialog;
+        m_dialog->setStyleSheet(ui->text->text());
     }
     else {
         ui->gridLayout->replaceWidget(ui->previewContainer, myWidget);

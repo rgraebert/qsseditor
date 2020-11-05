@@ -114,6 +114,13 @@
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="toolLoadQRC">
+           <property name="text">
+            <string>QRC</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QToolButton" name="toolOptions">
            <property name="toolTip">
             <string>Options</string>
@@ -305,8 +312,8 @@
    <slot>slotOptions()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>190</x>
-     <y>32</y>
+     <x>668</x>
+     <y>33</y>
     </hint>
     <hint type="destinationlabel">
      <x>238</x>
@@ -321,8 +328,8 @@
    <slot>undo()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>135</x>
-     <y>32</y>
+     <x>341</x>
+     <y>33</y>
     </hint>
     <hint type="destinationlabel">
      <x>54</x>
@@ -337,8 +344,8 @@
    <slot>redo()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>28</y>
+     <x>367</x>
+     <y>33</y>
     </hint>
     <hint type="destinationlabel">
      <x>96</x>
@@ -369,8 +376,8 @@
    <slot>slotAbout()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>216</x>
-     <y>25</y>
+     <x>694</x>
+     <y>33</y>
     </hint>
     <hint type="destinationlabel">
      <x>915</x>
@@ -385,8 +392,8 @@
    <slot>slotAboutQt()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>245</x>
-     <y>20</y>
+     <x>720</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel">
      <x>915</x>
@@ -401,12 +408,28 @@
    <slot>slotBrowse()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>489</x>
-     <y>589</y>
+     <x>1035</x>
+     <y>597</y>
     </hint>
     <hint type="destinationlabel">
      <x>915</x>
      <y>455</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolLoadQRC</sender>
+   <signal>clicked()</signal>
+   <receiver>QssEditor</receiver>
+   <slot>slotQRC()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>615</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1046</x>
+     <y>16</y>
     </hint>
    </hints>
   </connection>
@@ -421,5 +444,6 @@
   <slot>slotAbout()</slot>
   <slot>slotAboutQt()</slot>
   <slot>slotBrowse()</slot>
+  <slot>slotQRC()</slot>
  </slots>
 </ui>
